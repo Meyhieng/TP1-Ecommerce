@@ -1,35 +1,58 @@
-<script setup lang="ts">
+<script>
+import axios from "axios";
+import Promotion from "./components/promotion.vue";
+import Category from "./components/category.vue";
 
-  import { ref } from 'vue'
-  import Promotion from './components/promotion.vue'
-  import Category from './components/category.vue'
+export default {
+  components: {
+    Promotion,
+    Category,
+  },
+  data() {
+    return {
+      categories: [],
+      promotions: [],
+    };
+  },
 
+  methods: {
+    fetchCategories() {
+      axios
+        .get("http://localhost:3000/api/categories")
+        .then((response) => {
+          this.categories = response.data;
+          console.log("Categories loaded:", this.categories);
+        })
+        .catch((err) => {
+          console.log("Error loading categories:", err);
+        });
+    },
 
+    fetchPromotions() {
+      axios
+        .get("http://localhost:3000/api/promotions")
+        .then((response) => {
+          this.promotions = response.data;
+          console.log("Promotions loaded:", this.promotions);
+        })
+        .catch((err) => {
+          console.log("Error loading promotions:", err);
+        });
+    },
+  },
 
-  const catDatas = ref([
-    { imgScr: "/CategoriesItem/Cat1.png", catName: "Cake & Milk", quantity: 14, cardColor: "#F2FCE4" },
-    { imgScr: "/CategoriesItem/Cat2.png", catName: "Peach", quantity: 17, cardColor: "#FFFCEB" },
-    { imgScr: "/CategoriesItem/Cat3.png", catName: "Organic Kiwi", quantity: 21, cardColor: "#ECFFEC" },
-    { imgScr: "/CategoriesItem/Cat4.png", catName: "Red Apple", quantity: 68, cardColor: "#FEEFEA" },
-    { imgScr: "/CategoriesItem/Cat5.png", catName: "Snack", quantity: 34, cardColor: "#FFF3EB" },
-    { imgScr: "/CategoriesItem/Cat6.png", catName: "Black plum", quantity: 25, cardColor: "#FFF3FF" },
-    { imgScr: "/CategoriesItem/Cat7.png", catName: "Vegetables", quantity: 65, cardColor: "#F2FCE4" },
-    { imgScr: "/CategoriesItem/Cat8.png", catName: "Headphone", quantity: 33, cardColor: "#FFFCEB" },
-    { imgScr: "/CategoriesItem/Cat9.png", catName: "Cake & Milk", quantity: 54, cardColor: "#F2FCE4" },
-    { imgScr: "/CategoriesItem/Cat10.png", catName: "Orange", quantity: 63, cardColor: "#FFF3FF" }
-  ])
-
-  const promoDatas = ref([
-    { promoText: "Everyday Fresh & Clean with Our Products", promoImg: "/Promotion/Pro1.jpg", promoColor: "#F0E8D5", btnColor: "#3BB77E" },
-    { promoText: "Make your Breakfast Healthy and Easy", promoImg: "/Promotion/Pro2.png", promoColor: "#F3E8E8", btnColor: "#3BB77E" },
-    { promoText: "The best Organic Products Online", promoImg: "/Promotion/Pro3.jpg", promoColor: "#E7EAF3", btnColor: "#FDC040" }
-  ])
+  mounted() {
+    this.fetchCategories();
+    this.fetchPromotions();
+  },
+};
 </script>
 
 <template>
+  <!-- CATEGORY LIST -->
   <div class="category">
-    <category
-      v-for="(cat, index) in catDatas"
+    <Category
+      v-for="(cat, index) in categories"
       :key="index"
       class="box"
       :imgScr="cat.imgScr"
@@ -39,9 +62,10 @@
     />
   </div>
 
+  <!-- PROMOTION LIST -->
   <div class="promotion">
-    <promotion
-      v-for="(promo, index) in promoDatas"
+    <Promotion
+      v-for="(promo, index) in promotions"
       :key="index"
       class="box"
       :promoText="promo.promoText"
@@ -52,11 +76,13 @@
   </div>
 </template>
 
-<style scoped> 
-  .category, .promotion { 
-    display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center; 
-    gap: 10px; padding: 10px; 
-    } 
+<style scoped>
+.category,
+.promotion {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
 </style>
