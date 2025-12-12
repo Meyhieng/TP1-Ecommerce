@@ -1,81 +1,101 @@
-<script setup lang="ts">
-    import Button from '../components/Button.vue';
-
-    const props = defineProps({
-        promoText:{
-            type: String,
-            required: true
-        },
-        promoImg:{
-            type: String,
-            required: true
-        },
-        promoColor:{
-            type: String,
-            default: 'gray'
-        },
-        btnColor:{
-            type: String,
-            default: 'green'
-        }
-
-    })
-</script>
-
 <template>
-    
-    <div class="promotion-banner" :style="{ backgroundColor: promoColor }">
-        <div class="text-wrapper">
-            <h2>{{ promoText }}</h2>
-            <Button :style="{backgroundColor: btnColor}"></Button>
-        </div>
-        <div class="image-wrapper">
-            <img :src="promoImg" alt="Img">
-        </div>
+  <div class="promotion-banner" :style="{ backgroundColor: promotion.color }">
+    <div class="text-wrapper">
+      <h2>{{ promotion.title }}</h2>
+      <Button 
+        :style="{ backgroundColor: promotion.buttonColor }" 
+        @click="shopNow(promotion)"
+      >
+        Shop Now
+      </Button>
     </div>
-  
+
+    <div class="image-wrapper">
+      <img :src="fixedImageUrl" :alt="promotion.title">
+    </div>
+  </div>
 </template>
 
+<script setup lang="ts">
+import { computed } from 'vue'
+import Button from './Button.vue'
+
+interface Promotion {
+  title: string
+  color?: string
+  buttonColor?: string
+  image?: string
+}
+
+interface Props {
+  promotion: Promotion
+}
+
+const props = defineProps<Props>()
+
+const fixedImageUrl = computed(() => {
+  if (!props.promotion?.image) return ''
+  return `http://localhost:3000/${props.promotion.image.replace(/\\/g, '/')}`
+})
+
+const shopNow = (promotion: Promotion) => {
+  alert("Let's shop: " + promotion.title)
+}
+</script>
+
 <style scoped>
-    .promotion-banner {
-        width: 400px;
-        height: 300px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px;
-        border-radius: 10px;
-        height: 180px;
-        overflow: hidden;
-        position: relative;
-    }
+.promotion-banner {
+  width: 30%;                   
+  height: 240px;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+  background: #fff;
+}
 
-    .text-wrapper {
-        max-width: 50%;
-        z-index: 10;
-    }
+.promotion-banner:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+}
 
-    h2 {
-        font-size: 24px;
-        font-weight: bold;
-        line-height: 1.2;
-        margin-bottom: 15px;
-        color: #333;
-    }
+.text-wrapper {
+  max-width: 55%;
+  z-index: 2;
+}
 
-    .image-wrapper {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 80%;
-        padding: 20px;
-    }
+.text-wrapper h2 {
+  font-size: 20px;           
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 24px 0;
+  color: #222;
+}
 
-    img {
-        height: 100%;
-        width: auto;
-        border-radius: 0 10px 10px 0;
+.image-wrapper {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  padding: 20px 40px 20px 0;
+  pointer-events: none;
+}
 
+.image-wrapper img {
+  height: 70%;              
+  width: auto;
+  object-fit: contain;
+}
 
-    }
+.promotion-banner:not(:first-child) .text-wrapper h2 {
+  font-size: 22px;         
+}
 </style>
